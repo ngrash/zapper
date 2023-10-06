@@ -132,7 +132,12 @@ func (t *topic) tableRow(filter map[*topic]int) *g.TreeTableRowWidget {
 			value = *t.friendlyPayload
 		}
 		vl := g.Label(value)
-		return g.TreeTableRow(t.name, vl).Flags(g.TreeNodeFlagsSpanAvailWidth | g.TreeNodeFlagsLeaf)
+		return g.TreeTableRow(t.name,
+			vl, g.ContextMenu().MouseButton(g.MouseButtonRight).Layout(
+				g.MenuItem("Copy value").OnClick(func() { g.Context.GetPlatform().SetClipboard(value) }),
+				g.MenuItem("Copy topic").OnClick(func() { g.Context.GetPlatform().SetClipboard(t.last.Topic()) }),
+			),
+		).Flags(g.TreeNodeFlagsSpanAvailWidth | g.TreeNodeFlagsLeaf)
 	} else {
 		if filter == nil {
 			keys := make([]string, 0, len(t.children))
