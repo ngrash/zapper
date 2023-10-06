@@ -36,12 +36,14 @@ func loop() {
 
 	g.SingleWindow().Layout(
 		g.InputText(&fuzzyTerm).Hint("Fuzzy search").Size(g.Auto),
-		g.TreeTable().
-			Columns(
-				g.TableColumn("Topic"),
-				g.TableColumn("Value"),
-			).
-			Rows(tableRows()...),
+		g.Child().Layout(
+			g.TreeTable().
+				Columns(
+					g.TableColumn("Topic"),
+					g.TableColumn("Value"),
+				).
+				Rows(tableRows()...),
+		),
 	)
 }
 
