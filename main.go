@@ -187,17 +187,22 @@ func (t *topic) filter(filter map[*topic]int) []*topic {
 	return sorted
 }
 
+func (t *topic) fuzzyTerm() string {
+	return fmt.Sprintf("%s=%s", t.last.Topic(), *t.friendlyPayload)
+}
+
 func (t *topic) update(parts []string, msg mqtt.Message) {
 	if len(parts) == 0 {
-		oldTerm := fmt.Sprintf("%s=%s", msg.Topic(), t.friendlyPayload)
-		delete(fuzzyTopics, oldTerm)
-
-		sanitized := sanitize(msg.Payload())
+		if t.friendlyPayload != nil {
+			oldTerm := t.fuzzyTerm()
+			delete(fuzzyTopics, oldTerm)
+		}
 
 		t.last = msg
-		t.friendlyPayload = &sanitized
+		s := sanitize(msg.Payload())
+		t.friendlyPayload = &s
 
-		newTerm := fmt.Sprintf("%s=%s", msg.Topic(), t.friendlyPayload)
+		newTerm := t.fuzzyTerm()
 		fuzzyTerms[t] = newTerm
 		fuzzyTopics[newTerm] = t
 	} else {
