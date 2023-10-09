@@ -1,4 +1,4 @@
-module zapper
+module github.com/ngrash/zapper
 
 go 1.18
 
